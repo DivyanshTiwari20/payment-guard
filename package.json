@@ -1,16 +1,50 @@
 {
-  "name": "agentic-payment-sys",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "name": "payment-guard",
+  "version": "0.1.0",
+  "description": "Open-source, non-custodial payment safety layer for AI agents. The guardrail between your AI and your wallet.",
   "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "payment-guard": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "THREAT_MODEL.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"No tests yet\" && exit 0"
+  },
+  "keywords": [
+    "ai",
+    "agent",
+    "payments",
+    "security",
+    "mcp",
+    "guardrails",
+    "open-source"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/payment-guard.git"
+  },
+  "homepage": "https://github.com/your-org/payment-guard#readme",
+  "bugs": {
+    "url": "https://github.com/your-org/payment-guard/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
   "devDependencies": {
+    "@types/node": "^22.19.21",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3"
   },
