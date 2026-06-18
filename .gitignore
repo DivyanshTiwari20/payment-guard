@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Runtime data (policies, mandates, audit trail) — generated on first run
+data/*.json
+
+# Build output
+dist/
+
+# Environment
+.env
+.env.*
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
