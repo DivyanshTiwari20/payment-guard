@@ -1,0 +1,6 @@
+{
+  "maxAmount": 5000,
+  "dailyLimit": 20000,
+  "allowedPayees": [],
+  "expiresOn": null
+}
