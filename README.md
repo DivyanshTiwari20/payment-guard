@@ -216,3 +216,5 @@ set up the dev environment, add a rule to the engine, or add a new MCP tool.
 ## License
 
 [MIT](./LICENSE) © PaymentGuard contributors
+#   p a y m e n t - g u a r d  
+ 
