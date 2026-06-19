@@ -18,6 +18,7 @@
     "start": "tsx src/index.ts",
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
+    "build:demo": "npm run build && esbuild dist/web/engine-browser.js --bundle --format=esm --outfile=docs/engine.js",
     "prepublishOnly": "npm run build",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

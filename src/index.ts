@@ -21,6 +21,8 @@ export {
   remainingBudget,
 } from "./engine/mandate-engine.js";
 export { validateRequest } from "./engine/validators.js";
+export { decidePayment } from "./engine/decide.js";
+export type { DecisionContext, FullDecision } from "./engine/decide.js";
 export {
   computeHash,
   appendAuditEntry,

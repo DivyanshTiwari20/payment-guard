@@ -8,12 +8,7 @@
  */
 
 import { appendAuditEntry } from "./engine/audit.js";
-import { evaluatePayment, normalizePayee } from "./engine/policy-engine.js";
-import {
-  findActiveMandates,
-  selectMandate,
-} from "./engine/mandate-engine.js";
-import { validateRequest } from "./engine/validators.js";
+import { decidePayment } from "./engine/decide.js";
 import type { AuditEntry, Decision, Mandate, PaymentRequest } from "./engine/types.js";
 import {
   addSpendToday,
@@ -83,37 +78,27 @@ export function processPayment(request: PaymentRequest): PaymentResult {
     );
   }
 
-  // 2. Input validation / prompt-injection defense.
-  const validation = validateRequest(request);
-  if (!validation.allowed) {
-    return finalize(validation, null, spend.spent);
-  }
-
-  // 3. Mandate selection (scoped authorization).
-  const normalizedPayee = normalizePayee(request.payee);
+  // 2-4. Deterministic decision: input validation -> mandate -> global policy.
+  // All three live in the pure engine (decidePayment), so the MCP service, the
+  // library, and the in-browser demo share one source of truth.
   const mandates = loadMandates();
-  const active = findActiveMandates(mandates, normalizedPayee);
-  const { mandate, decision: mandateDecision } = selectMandate(active, request);
-  if (!mandate) {
-    return finalize(mandateDecision, null, spend.spent);
+  const result = decidePayment(request, {
+    policy,
+    mandates,
+    spentToday: spend.spent,
+  });
+  if (!result.decision.allowed) {
+    return finalize(result.decision, result.mandateId, spend.spent);
   }
 
-  // 4. Global policy (applies on top of the mandate; both must pass).
-  const policyDecision = evaluatePayment(request, policy, spend.spent);
-  if (!policyDecision.allowed) {
-    return finalize(policyDecision, mandate.id, spend.spent);
+  // 5. Settle: update the authorizing mandate's spend and the daily counter.
+  const mandateId = result.mandateId;
+  if (mandateId) {
+    applyMandateSpend(mandates, mandateId, request.amount);
+    saveMandates(mandates);
   }
-
-  // 5. Settle: update mandate spend and daily counter, then persist.
-  applyMandateSpend(mandates, mandate.id, request.amount);
-  saveMandates(mandates);
   const newSpentToday = addSpendToday(request.amount);
-
-  const decision: Decision = {
-    allowed: true,
-    reason: `Payment of ${request.amount} to "${request.payee}" approved under mandate ${mandate.id} (${mandate.purpose}).`,
-  };
-  return finalize(decision, mandate.id, newSpentToday);
+  return finalize(result.decision, mandateId, newSpentToday);
 }
 
 /** Mutate the matching mandate's spent field in place. */
