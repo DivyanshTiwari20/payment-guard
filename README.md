@@ -2,10 +2,14 @@
 
 > **Open-source payment safety layer for AI agents - the guardrail between your AI and your wallet.**
 
+[![npm version](https://img.shields.io/npm/v/payment-guard.svg)](https://www.npmjs.com/package/payment-guard)
+[![npm downloads](https://img.shields.io/npm/dm/payment-guard.svg)](https://www.npmjs.com/package/payment-guard)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6.svg)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 [![MCP Compatible](https://img.shields.io/badge/MCP-compatible-blueviolet.svg)](https://modelcontextprotocol.io/)
 [![Engine coverage: 100%](https://img.shields.io/badge/engine%20coverage-100%25-brightgreen.svg)](#testing)
+
+> **Install:** `npx -y payment-guard` (MCP server) · `npm install payment-guard` (library) · [on npm](https://www.npmjs.com/package/payment-guard)
 
 PaymentGuard is a **non-custodial, rail-agnostic** safety layer that sits between an AI agent and any payment rail. The user sets the rules in advance; the agent must go through PaymentGuard to spend. Decisions are made by **strict, deterministic code, never AI opinion**, so the agent can never argue, trick, or inject its way past your limits.
 
