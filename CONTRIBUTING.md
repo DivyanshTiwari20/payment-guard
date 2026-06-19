@@ -9,18 +9,21 @@ common contribution paths.
 Requires Node.js >= 20.
 
 ```bash
-git clone https://github.com/your-org/payment-guard.git
+git clone https://github.com/DivyanshTiwari20/payment-guard.git
 cd payment-guard
 npm install
 
 npm start          # run the MCP server over stdio
 npm run dev        # run with auto-reload (tsx watch)
 npm run typecheck  # tsc --noEmit (must pass — strict mode, no `any`)
+npm test           # run the Vitest suite
+npm run coverage   # run tests with engine coverage (thresholds enforced)
 npm run build      # emit dist/
 ```
 
 Runtime data lives in `data/` (gitignored, created on first run). Delete it to
-reset to defaults.
+reset to defaults. Set `PAYMENT_GUARD_DATA_DIR` to store it elsewhere (used by
+the test suite to run against isolated temp directories).
 
 ## Project principles (please respect these)
 
@@ -45,9 +48,12 @@ reset to defaults.
 2. Order matters — place hard, cheap, fail-closed checks early.
 3. Keep the rule deterministic and thread a `now: Date` parameter rather than
    reading the clock internally, so it stays testable.
-4. Make sure the rule is reflected in the relevant tool description so the agent
+4. **Add tests** under `test/engine/` covering the allow path, every block path,
+   and the boundary (e.g. exactly-at-the-limit). Engine coverage thresholds are
+   enforced in CI — `npm run coverage` must pass.
+5. Make sure the rule is reflected in the relevant tool description so the agent
    understands the constraint.
-5. Document the threat it addresses in `THREAT_MODEL.md` if applicable.
+6. Document the threat it addresses in `THREAT_MODEL.md` if applicable.
 
 ## How to add a new MCP tool
 
@@ -70,6 +76,7 @@ reset to defaults.
 ## Submitting changes
 
 1. Branch from `main`.
-2. Ensure `npm run typecheck` passes.
+2. Ensure `npm run typecheck` and `npm test` pass (and `npm run coverage` for
+   engine changes).
 3. Open a PR describing the change and, for engine changes, the threat/behavior
    it affects.

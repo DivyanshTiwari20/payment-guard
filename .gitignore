@@ -7,6 +7,9 @@ data/*.json
 # Build output
 dist/
 
+# Test coverage output
+coverage/
+
 # Environment
 .env
 .env.*

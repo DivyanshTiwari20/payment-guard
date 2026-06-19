@@ -5,6 +5,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6.svg)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 [![MCP Compatible](https://img.shields.io/badge/MCP-compatible-blueviolet.svg)](https://modelcontextprotocol.io/)
+[![Engine coverage: 100%](https://img.shields.io/badge/engine%20coverage-100%25-brightgreen.svg)](#testing)
 
 PaymentGuard is a **non-custodial, rail-agnostic** safety layer that sits between an AI agent and any payment rail. The user sets the rules in advance; the agent must go through PaymentGuard to spend. Decisions are made by **strict, deterministic code, never AI opinion**, so the agent can never argue, trick, or inject its way past your limits.
 
@@ -22,6 +23,7 @@ It ships two ways:
 - [Quick start](#quick-start)
 - [MCP tools](#mcp-tools)
 - [Architecture](#architecture)
+- [Testing](#testing)
 - [Security](#security)
 - [Contributing](#contributing)
 - [License](#license)
@@ -85,18 +87,20 @@ The risk is structural:
 > Requires **Node.js >= 20**.
 
 ```bash
-git clone https://github.com/your-org/payment-guard.git
+git clone https://github.com/DivyanshTiwari20/payment-guard.git
 cd payment-guard
 npm install
 npm start          # starts the MCP server over stdio
 ```
 
-### Connect to Claude Code (under 2 minutes)
+### Connect to any AI tool (no clone needed)
 
-Register the server with the Claude Code CLI (use an absolute path):
+After installing from npm, any MCP client — Claude Code, Claude Desktop, Cursor,
+Windsurf, Cline — can launch it with a single line. `npx` downloads and starts it
+for you:
 
 ```bash
-claude mcp add payment-guard -- npx tsx /abs/path/to/payment-guard/src/index.ts
+claude mcp add payment-guard -- npx -y payment-guard
 ```
 
 Or add it to your MCP client config directly:
@@ -106,7 +110,7 @@ Or add it to your MCP client config directly:
   "mcpServers": {
     "payment-guard": {
       "command": "npx",
-      "args": ["tsx", "/abs/path/to/payment-guard/src/index.ts"]
+      "args": ["-y", "payment-guard"]
     }
   }
 }
@@ -210,6 +214,34 @@ src/
 ```
 
 The engine is **pure**: no async, no I/O, no network, no AI. Data in, decision out. That purity *is* the security guarantee. See [CLAUDE.md](./CLAUDE.md) for design principles and conventions.
+
+### Configuration
+
+| Env var | Default | Purpose |
+| --- | --- | --- |
+| `PAYMENT_GUARD_DATA_DIR` | `<project>/data` | Where policy/mandate/spend/audit JSON is persisted. Point it elsewhere for containers, alternate hosts, or isolated test runs. |
+
+---
+
+## Testing
+
+For a tool whose whole value is *making the right call deterministically*, the
+tests **are** the product. The pure decision engine is covered to **100% of
+lines and functions** (branch coverage ≥ 90%, enforced in CI), and the
+tamper-evident audit chain is proven end to end — including that a forged or
+deleted entry is detected.
+
+```bash
+npm test           # run the full suite (Vitest)
+npm run coverage   # run with engine coverage report + thresholds
+```
+
+- `test/engine/` — unit tests for every pure rule: input validation /
+  prompt-injection defense, global policy, mandate lifecycle, and the audit hash.
+  Each rule is tested on its allow path, **every** block path, and the boundary.
+- `test/integration/` — the disk-backed audit chain (append → verify → detect
+  tampering) and the full `processPayment` flow, run against an isolated temp
+  data directory.
 
 ---
 

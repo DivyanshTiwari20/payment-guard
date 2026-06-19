@@ -11,13 +11,25 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
-/** <project-root>/data — store.ts lives at <root>/src/storage/. */
-export const DATA_DIR = resolve(here, "..", "..", "data");
+/** Default: <project-root>/data — store.ts lives at <root>/src/storage/. */
+const DEFAULT_DATA_DIR = resolve(here, "..", "..", "data");
+
+/**
+ * Resolve the data directory, honoring the `PAYMENT_GUARD_DATA_DIR` env var.
+ *
+ * Resolved lazily (per call, not at import) so it can be configured for
+ * containers, alternate hosts, or isolated test runs without a rebuild.
+ */
+export function dataDir(): string {
+  const override = process.env.PAYMENT_GUARD_DATA_DIR;
+  return override && override.trim().length > 0 ? resolve(override) : DEFAULT_DATA_DIR;
+}
 
 /** Ensure the data directory exists. */
 export function ensureDataDir(): void {
-  if (!existsSync(DATA_DIR)) {
-    mkdirSync(DATA_DIR, { recursive: true });
+  const dir = dataDir();
+  if (!existsSync(dir)) {
+    mkdirSync(dir, { recursive: true });
   }
 }
 
@@ -33,7 +45,7 @@ export function ensureDataDir(): void {
  */
 export function readJSON<T>(filename: string, fallback: T): T {
   ensureDataDir();
-  const path = join(DATA_DIR, filename);
+  const path = join(dataDir(), filename);
 
   if (!existsSync(path)) {
     writeJSON(filename, fallback);
@@ -52,5 +64,5 @@ export function readJSON<T>(filename: string, fallback: T): T {
 /** Serialize and write `data` to `data/<filename>` (pretty-printed). */
 export function writeJSON<T>(filename: string, data: T): void {
   ensureDataDir();
-  writeFileSync(join(DATA_DIR, filename), JSON.stringify(data, null, 2), "utf8");
+  writeFileSync(join(dataDir(), filename), JSON.stringify(data, null, 2), "utf8");
 }
