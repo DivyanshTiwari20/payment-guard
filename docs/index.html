@@ -3,138 +3,456 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>PaymentGuard — why a spending limit isn't just one line of code</title>
-<meta name="description" content="A 10-line amount check blocks your real bills and still lets a prompt-injected AI agent drain your account. PaymentGuard is the open-source, deterministic guardrail that doesn't. Watch the side-by-side." />
-<meta property="og:title" content="“It's just if amount > 500.” — here's why that gets you robbed." />
-<meta property="og:description" content="Watch a 10-line spending check vs PaymentGuard run the same prompt-injection attack. One blocks your real bill and lets the theft through. The other doesn't." />
+<title>PaymentGuard — let AI handle payments, keep control of your money</title>
+<meta name="description" content="AI assistants can move money for you now — and one hidden instruction can trick them into sending it to a stranger. PaymentGuard is a free, open-source safety gate: set the rules once, and no AI can break them. Watch it block a live attack." />
+
+<!-- canonical + crawl directives -->
+<link rel="canonical" href="https://divyanshtiwari20.github.io/payment-guard/" />
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+<meta name="googlebot" content="index, follow" />
+
+<!-- authorship + app identity -->
+<meta name="author" content="Divyansh Tiwari" />
+<meta name="application-name" content="PaymentGuard" />
+<meta name="keywords" content="AI payments, agentic payments, payment safety, prompt injection defense, MCP server, AI agent security, spending limits, non-custodial, payment guardrail, AI wallet" />
+<meta name="theme-color" content="#0a0a0b" />
+<meta name="color-scheme" content="light" />
+
+<!-- Open Graph -->
+<meta property="og:title" content="Let AI handle the payments. Keep control of the money." />
+<meta property="og:description" content="One hidden instruction can trick an AI into draining your account. PaymentGuard is the free safety gate that stops it. Watch the live side-by-side." />
 <meta property="og:type" content="website" />
+<meta property="og:url" content="https://divyanshtiwari20.github.io/payment-guard/" />
+<meta property="og:site_name" content="PaymentGuard" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:image" content="https://divyanshtiwari20.github.io/payment-guard/assets/og-image.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="PaymentGuard — the free, open-source safety gate between your AI and your money." />
+
+<!-- Twitter / X -->
 <meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Let AI handle the payments. Keep control of the money." />
+<meta name="twitter:description" content="One hidden instruction can trick an AI into draining your account. PaymentGuard is the free safety gate that stops it. Watch the live side-by-side." />
+<meta name="twitter:image" content="https://divyanshtiwari20.github.io/payment-guard/assets/og-image.png" />
+<meta name="twitter:image:alt" content="PaymentGuard — the free, open-source safety gate between your AI and your money." />
+
+<!-- icons + manifest -->
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png" />
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+<link rel="manifest" href="site.webmanifest" />
+
+<!-- performance hints -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="modulepreload" href="engine.js" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<!-- structured data (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://divyanshtiwari20.github.io/payment-guard/#website",
+      "url": "https://divyanshtiwari20.github.io/payment-guard/",
+      "name": "PaymentGuard",
+      "description": "A free, open-source safety gate between your AI and your money.",
+      "inLanguage": "en",
+      "publisher": { "@id": "https://github.com/DivyanshTiwari20#person" }
+    },
+    {
+      "@type": "Person",
+      "@id": "https://github.com/DivyanshTiwari20#person",
+      "name": "Divyansh Tiwari",
+      "url": "https://github.com/DivyanshTiwari20"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "PaymentGuard",
+      "applicationCategory": "DeveloperApplication",
+      "applicationSubCategory": "Payment safety layer for AI agents",
+      "operatingSystem": "Node.js, cross-platform",
+      "description": "PaymentGuard is a free, open-source, non-custodial safety gate for AI-agent payments. You set the rules in advance — who can be paid, how much, and for how long — and they are enforced in deterministic code the AI cannot override, defeating prompt-injection-driven theft.",
+      "url": "https://divyanshtiwari20.github.io/payment-guard/",
+      "image": "https://divyanshtiwari20.github.io/payment-guard/assets/og-image.png",
+      "downloadUrl": "https://www.npmjs.com/package/payment-guard",
+      "softwareHelp": "https://github.com/DivyanshTiwari20/payment-guard",
+      "license": "https://opensource.org/licenses/MIT",
+      "isAccessibleForFree": true,
+      "author": { "@id": "https://github.com/DivyanshTiwari20#person" },
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Does PaymentGuard ever hold my money?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No — it never touches your money. It only says yes or no to a payment. The money itself moves through whatever you already use: your card, your bank, or crypto." }
+        },
+        {
+          "@type": "Question",
+          "name": "Can a hacked AI get around the rules?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. The rules run as plain code, completely separate from the AI. A hacker can fool the assistant with a hidden message — but they can't talk the rules into letting a payment through." }
+        },
+        {
+          "@type": "Question",
+          "name": "What can I pay with?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Anything. PaymentGuard doesn't move money itself, so it works on top of cards, bank transfers, or crypto — whatever you already use." }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I add it?",
+          "acceptedAnswer": { "@type": "Answer", "text": "One line. To use it with an AI assistant: npx -y payment-guard. Or to use it inside your own app: npm install payment-guard." }
+        },
+        {
+          "@type": "Question",
+          "name": "Is it really free?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes — completely free and open source under the MIT license. The engine running the demo on this page is the exact code you'd install." }
+        }
+      ]
+    }
+  ]
+}
+</script>
 <style>
   :root {
-    --ink: #0a0a0a; --body: #3c3c43; --muted: #8a8a8f; --line: #ececec;
-    --bg: #ffffff; --soft: #fafafa; --ok: #15803d; --ok-bg: #f0fdf4; --ok-line: #bbf7d0;
-    --no: #b91c1c; --no-bg: #fef2f2; --no-line: #fecaca; --accent: #111;
+    --ink: #0a0a0b; --body: #45454d; --muted: #8a8a93; --faint: #b6b6bf;
+    --line: #ececef; --line-2: #f2f2f4; --bg: #ffffff; --soft: #fafafb; --soft-2: #f6f6f8;
+    --ok: #15803d; --ok-bg: #f0fdf4; --ok-line: #bbf7d0;
+    --no: #b91c1c; --no-bg: #fef2f2; --no-line: #fecaca;
+    --brand: #2563eb; --brand-2: #4f46e5; --brand-soft: #eff4ff;
+    --radius: 18px; --shadow: 0 1px 2px rgba(16,16,20,.04), 0 12px 32px -12px rgba(16,16,20,.10);
+    --shadow-lg: 0 2px 4px rgba(16,16,20,.04), 0 24px 60px -20px rgba(16,16,20,.18);
   }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
     margin: 0; background: var(--bg); color: var(--body);
-    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
   }
-  .wrap { max-width: 860px; margin: 0 auto; padding: 0 24px; }
-  a { color: var(--ink); text-decoration: none; border-bottom: 1px solid #d4d4d4; }
-  a:hover { border-color: var(--ink); }
-  nav { display: flex; justify-content: space-between; align-items: center; padding: 22px 0; }
-  nav .brand { font-weight: 700; color: var(--ink); border: none; letter-spacing: -.01em; }
-  nav .links { display: flex; gap: 20px; font-size: 14.5px; }
-  nav .links a { color: var(--body); border: none; }
-  nav .links a:hover { color: var(--ink); }
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background:
+      radial-gradient(900px 480px at 82% -10%, rgba(37,99,235,.06), transparent 60%),
+      radial-gradient(700px 420px at -10% 2%, rgba(79,70,229,.04), transparent 55%);
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+  .narrow { max-width: 760px; }
+  a { color: var(--ink); text-decoration: none; }
+  h1, h2, h3, h4 { color: var(--ink); letter-spacing: -.024em; }
 
-  .hero { padding: 56px 0 8px; }
-  .hero .quote { font-size: clamp(30px, 5.2vw, 52px); line-height: 1.08; letter-spacing: -.02em;
-    color: var(--ink); font-weight: 700; margin: 0; }
-  .hero .quote .dim { color: #c7c7cc; }
-  .hero p.lede { font-size: 19px; color: var(--body); max-width: 620px; margin: 22px 0 0; }
-  .hero .run { margin-top: 30px; }
-  .btn { cursor: pointer; font: inherit; font-weight: 600; font-size: 16px; border-radius: 10px;
-    padding: 13px 22px; border: 1px solid var(--ink); background: var(--ink); color: #fff;
-    transition: opacity .15s, transform .05s; }
-  .btn:hover { opacity: .88; }
-  .btn:active { transform: translateY(1px); }
-  .btn.ghost { background: #fff; color: var(--ink); }
-  .btn:disabled { opacity: .5; cursor: default; }
+  /* scroll reveal (degrades to fully visible if JS is off) */
+  body.reveal-on .reveal { opacity: 0; transform: translateY(16px); transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
+  body.reveal-on .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { body.reveal-on .reveal { opacity: 1 !important; transform: none !important; transition: none; } }
 
-  .exp { margin: 30px 0 0; }
-  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-  @media (max-width: 720px) { .cols { grid-template-columns: 1fr; } }
-  .col { border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: #fff; }
-  .col > header { padding: 16px 18px; border-bottom: 1px solid var(--line); }
-  .col > header h3 { margin: 0; font-size: 16px; color: var(--ink); letter-spacing: -.01em; }
-  .col > header .tag { font-size: 12.5px; color: var(--muted); margin-top: 3px; }
-  .codeline { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px;
-    color: #444; background: var(--soft); border-radius: 8px; padding: 8px 10px; margin-top: 10px; }
-  .rules { font-size: 13px; color: var(--body); margin-top: 10px; }
-  .rules div { padding: 1px 0; }
-  .feed { padding: 10px 12px; min-height: 230px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-size: 12.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 18px;
+  }
+  .eyebrow .num {
+    font-family: "JetBrains Mono", monospace; font-weight: 500; color: var(--brand);
+    background: var(--brand-soft); border-radius: 6px; padding: 2px 7px; letter-spacing: 0;
+  }
+  .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); }
+
+  /* ---------- buttons ---------- */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font: inherit;
+    font-weight: 600; font-size: 15px; border-radius: 12px; padding: 13px 22px;
+    border: 1px solid var(--ink); background: var(--ink); color: #fff;
+    transition: transform .06s ease, box-shadow .2s ease, opacity .15s ease, background .15s ease, border-color .15s ease;
+  }
+  .btn:hover { box-shadow: 0 10px 24px -12px rgba(10,10,11,.5); transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+  .btn.ghost { background: #fff; color: var(--ink); border-color: var(--line); }
+  .btn.ghost:hover { border-color: var(--ink); box-shadow: var(--shadow); }
+  .btn:disabled { opacity: .45; cursor: default; transform: none; box-shadow: none; }
+
+  /* ---------- icon copy-command ---------- */
+  .copy {
+    display: inline-flex; align-items: center; gap: 7px; cursor: pointer; font: inherit;
+    color: var(--body); background: #fff; border: 1px solid var(--line); border-radius: 9px;
+    padding: 8px 9px; transition: color .15s, border-color .15s, background .15s;
+  }
+  .copy:hover { color: var(--ink); border-color: var(--ink); }
+  .copy.copied { color: var(--ok); border-color: var(--ok-line); background: var(--ok-bg); }
+  .copy svg { display: block; }
+  .copy .i-check { display: none; }
+  .copy.copied .i-copy { display: none; }
+  .copy.copied .i-check { display: block; }
+  .cmd { display: flex; align-items: center; gap: 10px; background: var(--soft); border: 1px solid var(--line); border-radius: 11px; padding: 7px 8px 7px 14px; }
+  .cmd code { flex: 1; min-width: 0; overflow: auto; background: none; border: none; padding: 0; font-family: "JetBrains Mono", monospace; font-size: 14.5px; color: var(--ink); white-space: nowrap; }
+  .pill-copy { border-radius: 999px; padding: 7px 9px 7px 14px; color: var(--muted); font-family: "JetBrains Mono", monospace; font-size: 12.5px; gap: 9px; }
+
+  /* ---------- top bar (brand only, no nav) ---------- */
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 26px 0 0; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; color: var(--ink); font-size: 16.5px; letter-spacing: -.01em; }
+  .brand .glyph { width: 26px; height: 26px; border-radius: 8px; background: var(--ink); color: #fff; display: grid; place-items: center; font-size: 14px; }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 54px 0 18px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 500;
+    color: var(--body); background: #fff; border: 1px solid var(--line); border-radius: 999px;
+    padding: 6px 14px 6px 11px; box-shadow: var(--shadow); margin-bottom: 26px;
+  }
+  .badge .pip { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 4px rgba(21,128,61,.12); }
+  .badge b { color: var(--ink); font-weight: 600; }
+  .hero h1 {
+    font-size: clamp(36px, 5.6vw, 62px); line-height: 1.03; font-weight: 800; margin: 0; max-width: 19ch;
+  }
+  .hero h1 .accent { background: linear-gradient(90deg, var(--brand), var(--brand-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero .lede { font-size: clamp(17px, 2.1vw, 20px); color: var(--body); max-width: 62ch; margin: 24px 0 0; }
+  .hero .lede b { color: var(--ink); font-weight: 600; }
+  .hero .cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 34px; }
+  .trust { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 26px; color: var(--muted); font-size: 13.5px; }
+  .trust span { display: inline-flex; align-items: center; gap: 7px; }
+  .trust .tick { color: var(--ok); font-weight: 700; }
+
+  /* ---------- window / screenshot frame ---------- */
+  .shot { border-radius: var(--radius); border: 1px solid var(--line); background: #fff; box-shadow: var(--shadow-lg); overflow: hidden; }
+  .shot .chrome { display: flex; align-items: center; gap: 7px; padding: 13px 16px; border-bottom: 1px solid var(--line-2); background: var(--soft); }
+  .shot .chrome i { width: 11px; height: 11px; border-radius: 50%; background: #e0e0e4; display: inline-block; }
+  .shot .chrome .addr { margin-left: 12px; font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--faint); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .shot .frame { background: var(--soft-2); overflow: hidden; }
+  /* full width, no side cropping — only the bottom is clipped by max-height */
+  .shot img { display: block; width: 100%; height: auto; }
+  .shot .ph { padding: 64px 28px; text-align: center; color: var(--faint); }
+  .shot.is-empty img { display: none; }
+  .shot:not(.is-empty) .ph { display: none; }
+  .shot .ph .ph-icn { font-size: 26px; }
+  .shot .ph code { font-family: "JetBrains Mono", monospace; font-size: 12.5px; color: var(--muted); background: #fff; border: 1px solid var(--line); border-radius: 7px; padding: 3px 8px; }
+
+  .hero-shot { margin-top: 52px; }
+  .hero-shot .frame { max-height: clamp(300px, 40vw, 470px); }
+  .about-shot .frame { max-height: 560px; }
+
+  /* ---------- generic section ---------- */
+  section { padding: 84px 0; border-top: 1px solid var(--line-2); }
+  section .head h2 { font-size: clamp(28px, 3.7vw, 38px); font-weight: 800; margin: 0; line-height: 1.1; max-width: 20ch; }
+  section .head .sub { font-size: 17px; color: var(--body); margin: 16px 0 0; max-width: 60ch; }
+
+  /* ---------- "what it is" ---------- */
+  .is-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 40px; align-items: start; margin-top: 42px; }
+  @media (max-width: 860px) { .is-grid { grid-template-columns: 1fr; gap: 28px; } }
+  .is-grid .lead-p { font-size: 19px; line-height: 1.6; color: var(--body); margin: 0; }
+  .is-grid .lead-p b { color: var(--ink); }
+  .analogy { border: 1px solid var(--line); border-radius: var(--radius); background: linear-gradient(180deg, #fff, var(--soft)); padding: 24px; box-shadow: var(--shadow); }
+  .analogy .k { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--brand); margin-bottom: 11px; }
+  .analogy p { margin: 0; font-size: 15.5px; color: var(--body); }
+  .analogy p b { color: var(--ink); }
+
+  /* ---------- demo (what it does) ---------- */
+  .demo-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 28px; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 760px) { .cols { grid-template-columns: 1fr; } }
+  .col { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: #fff; box-shadow: var(--shadow); }
+  .col.guard { border-color: #dbe4ff; box-shadow: 0 1px 2px rgba(16,16,20,.04), 0 18px 40px -18px rgba(37,99,235,.22); }
+  .col > header { padding: 18px 20px; border-bottom: 1px solid var(--line-2); }
+  .col > header h3 { margin: 0; font-size: 16px; display: flex; align-items: center; gap: 9px; }
+  .col.guard > header h3 .badge2 { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--brand); background: var(--brand-soft); border-radius: 6px; padding: 2px 7px; margin: 0; }
+  .col > header .tag { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
+  .codeline { font-family: "JetBrains Mono", monospace; font-size: 12.5px; color: #555; background: var(--soft); border: 1px solid var(--line-2); border-radius: 8px; padding: 9px 11px; margin-top: 12px; }
+  .rules { font-size: 13px; color: var(--body); margin-top: 12px; }
+  .rules div { padding: 2px 0; }
+  .feed { padding: 10px 12px; min-height: 246px; }
   .row { display: grid; grid-template-columns: 18px 1fr auto; gap: 9px; align-items: baseline;
-    padding: 7px 6px; border-radius: 8px; font-size: 13.5px; opacity: 0; transform: translateY(4px);
-    animation: pop .25s forwards; }
+    padding: 8px 8px; border-radius: 9px; font-size: 13.5px; opacity: 0; transform: translateY(4px); animation: pop .25s forwards; }
   @keyframes pop { to { opacity: 1; transform: none; } }
   .row .mark { font-size: 13px; }
   .row.ok { background: var(--ok-bg); } .row.no { background: var(--no-bg); }
-  .row .desc { color: #404040; } .row .amt { font-variant-numeric: tabular-nums; color: #555; }
+  .row .desc { color: #404040; } .row .amt { font-variant-numeric: tabular-nums; color: #555; font-family: "JetBrains Mono", monospace; font-size: 12.5px; }
   .row.ok .amt { color: var(--ok); } .row.no .amt { color: var(--no); }
-  .scoreline { border-top: 1px solid var(--line); padding: 14px 18px; font-size: 14px; min-height: 56px; }
+  .scoreline { border-top: 1px solid var(--line-2); padding: 16px 20px; font-size: 14px; min-height: 60px; }
   .scoreline .big { font-size: 15px; color: var(--ink); font-weight: 600; }
-  .scoreline .sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .scoreline .sub { color: var(--muted); font-size: 13px; margin-top: 3px; }
   .verdict-ok { color: var(--ok); font-weight: 700; }
   .verdict-no { color: var(--no); font-weight: 700; }
 
-  section.why { padding: 64px 0 8px; }
-  section.why h2 { font-size: 26px; color: var(--ink); letter-spacing: -.02em; margin: 0 0 6px; }
-  .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px 36px; margin-top: 28px; }
-  @media (max-width: 720px) { .why-grid { grid-template-columns: 1fr; } }
-  .why-item h4 { margin: 0 0 4px; color: var(--ink); font-size: 16px; }
-  .why-item p { margin: 0; font-size: 14.5px; color: var(--body); }
+  /* ---------- benefits ---------- */
+  .ben-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 44px; }
+  @media (max-width: 760px) { .ben-grid { grid-template-columns: 1fr; } }
+  .ben { position: relative; border: 1px solid var(--line); border-radius: var(--radius); padding: 28px 26px; background: #fff; box-shadow: var(--shadow); transition: transform .14s ease, box-shadow .22s ease, border-color .22s ease; overflow: hidden; }
+  .ben::after { content: ""; position: absolute; left: 0; top: 0; height: 3px; width: 0; background: linear-gradient(90deg, var(--brand), var(--brand-2)); transition: width .3s ease; }
+  .ben:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: #e2e2e8; }
+  .ben:hover::after { width: 100%; }
+  .ben .ic { width: 42px; height: 42px; border-radius: 12px; background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; margin-bottom: 18px; }
+  .ben h4 { margin: 0 0 8px; font-size: 17.5px; }
+  .ben p { margin: 0; font-size: 14.5px; color: var(--body); }
+  .ben p b { color: var(--ink); }
 
-  section.use { padding: 56px 0 8px; }
-  section.use h2 { font-size: 22px; color: var(--ink); margin: 0 0 14px; letter-spacing: -.01em; }
-  .install { border: 1px solid var(--line); border-radius: 14px; padding: 6px 18px; }
-  .install .line { display: flex; justify-content: space-between; align-items: center; gap: 12px;
-    padding: 14px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
-  .install .line:last-child { border-bottom: none; }
-  .install code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 14px;
-    background: var(--soft); border: 1px solid var(--line); border-radius: 8px; padding: 7px 11px; color: #111; }
-  .install .what { color: var(--muted); font-size: 14px; }
-  footer { margin: 64px 0 60px; padding-top: 24px; border-top: 1px solid var(--line);
-    color: var(--muted); font-size: 14px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-  footer a { color: var(--body); border: none; } footer a:hover { color: var(--ink); }
+  /* ---------- about ---------- */
+  .about-grid { display: grid; grid-template-columns: 1fr 1.05fr; gap: 48px; align-items: center; margin-top: 40px; }
+  @media (max-width: 860px) { .about-grid { grid-template-columns: 1fr; gap: 32px; } }
+  .about-grid p { font-size: 16.5px; color: var(--body); margin: 0 0 16px; }
+  .about-grid p b { color: var(--ink); }
+  .meta-list { list-style: none; padding: 0; margin: 24px 0 0; display: grid; gap: 12px; }
+  .meta-list li { display: flex; align-items: center; gap: 12px; font-size: 14.5px; color: var(--body); }
+  .meta-list .key { font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--muted); min-width: 84px; }
+  .meta-list a { border-bottom: 1px solid var(--faint); }
+  .meta-list a:hover { border-color: var(--ink); }
+  .about-shot { margin: 0; }
+
+  /* ---------- faq ---------- */
+  .faq { margin-top: 38px; border-top: 1px solid var(--line); }
+  .faq details { border-bottom: 1px solid var(--line); }
+  .faq summary { list-style: none; cursor: pointer; padding: 22px 4px; display: flex; align-items: center; justify-content: space-between; gap: 18px; font-size: 17px; font-weight: 600; color: var(--ink); }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary:hover { color: var(--brand); }
+  .faq summary .chev { color: var(--faint); transition: transform .2s ease, color .2s ease; font-size: 20px; line-height: 1; }
+  .faq details[open] summary .chev { transform: rotate(45deg); color: var(--brand); }
+  .faq .ans { padding: 0 4px 24px; font-size: 15.5px; color: var(--body); max-width: 70ch; }
+  .faq .ans b { color: var(--ink); }
+  .faq .ans .cmd { margin-top: 12px; max-width: 420px; }
+  .faq .ans .cmd:first-of-type { margin-bottom: 14px; }
+
+  /* ---------- dark call-to-action band ---------- */
+  .band-sec { border-top: none; padding: 28px 0 4px; }
+  .cta-band {
+    position: relative; overflow: hidden; border-radius: 26px; color: #fff;
+    background: radial-gradient(120% 140% at 80% -10%, #1a1a2e 0%, #0a0a0b 55%);
+    padding: clamp(40px, 6vw, 72px) clamp(28px, 5vw, 60px); box-shadow: var(--shadow-lg);
+  }
+  .cta-band::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(620px 320px at 88% -30%, rgba(79,70,229,.45), transparent 60%); }
+  .cta-band > * { position: relative; }
+  .cta-band .eyebrow { color: rgba(255,255,255,.6); margin-bottom: 16px; }
+  .cta-band .eyebrow .dot { background: #fff; }
+  .cta-band h2 { color: #fff; font-size: clamp(28px, 4.2vw, 44px); font-weight: 800; margin: 0; max-width: 16ch; line-height: 1.06; }
+  .cta-band p { color: rgba(255,255,255,.72); font-size: 17px; margin: 16px 0 0; max-width: 52ch; }
+  .cta-band .actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 30px; }
+  .cta-band .cmd { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.14); }
+  .cta-band .cmd code { color: #fff; }
+  .cta-band .copy { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18); color: #fff; }
+  .cta-band .copy:hover { background: rgba(255,255,255,.16); border-color: rgba(255,255,255,.35); color: #fff; }
+  .cta-band .btn.ghost { background: transparent; color: #fff; border-color: rgba(255,255,255,.28); }
+  .cta-band .btn.ghost:hover { border-color: #fff; background: rgba(255,255,255,.06); }
+
+  /* ---------- footer ---------- */
+  footer { border-top: 1px solid var(--line); margin-top: 40px; padding: 40px 0 64px; }
+  .foot-grid { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; color: var(--muted); font-size: 14px; }
+  .foot-grid a { color: var(--body); border-bottom: 1px solid var(--faint); }
+  .foot-grid a:hover { color: var(--ink); border-color: var(--ink); }
+  .foot-links { display: flex; gap: 18px; flex-wrap: wrap; }
 </style>
 </head>
 <body>
+
+<!-- reusable SVG copy + check icons live inline on each button -->
 <div class="wrap">
+  <div class="topbar">
+    <a class="brand" href="#top"><span class="glyph">◆</span> PaymentGuard</a>
+    <button class="copy pill-copy" data-copy="npm i payment-guard" title="Copy" aria-label="Copy install command">
+      <span class="lbl">npm i payment-guard</span>
+      <svg class="i-copy" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      <svg class="i-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </button>
+  </div>
+</div>
 
-  <nav>
-    <a class="brand" href="#">● PaymentGuard</a>
-    <div class="links">
-      <a href="https://github.com/DivyanshTiwari20/payment-guard">GitHub</a>
-      <a href="https://www.npmjs.com/package/payment-guard">npm</a>
-    </div>
-  </nav>
-
+<!-- ───────────────── HERO ───────────────── -->
+<div class="wrap" id="top">
   <header class="hero">
-    <h1 class="quote">"It's just <span class="dim">if&nbsp;amount&nbsp;&gt;&nbsp;500</span>, <br />why is this a whole package?"</h1>
+    <span class="badge"><span class="pip"></span> The safety layer for AI payments · <b>Free &amp; open source</b></span>
+    <h1>Let AI handle the payments. <span class="accent">Keep control of the money.</span></h1>
     <p class="lede">
-      Because that one line <b>rejects your real $1,850 electricity bill</b> — and still lets a
-      prompt-injected AI agent <b>drain your account in tiny payments</b>. Same attack, two defenses.
-      Press play.
+      AI assistants can now pay bills and buy things for you. But <b>one hidden instruction</b> can trick
+      them into sending your money to a stranger. PaymentGuard is a <b>free safety gate</b>: you set the
+      rules once, and no AI can break them — no matter what it's told to do.
     </p>
-    <div class="run">
-      <button class="btn" id="run">▶ Run the prompt-injection attack</button>
-      <button class="btn ghost" id="reset" style="display:none">Reset</button>
+    <div class="cta">
+      <a class="btn" href="#does">▶ Watch it block a real attack</a>
+      <a class="btn ghost" href="https://github.com/DivyanshTiwari20/payment-guard">View on GitHub</a>
     </div>
-  </header>
+    <div class="trust">
+      <span><span class="tick">✓</span> Free &amp; open source</span>
+      <span><span class="tick">✓</span> Never touches your money</span>
+      <span><span class="tick">✓</span> Rules the AI can't override</span>
+    </div>
 
-  <div class="exp">
-    <div class="cols">
+    <!-- main screenshot — big premium banner, bottom-cropped only -->
+    <figure class="shot hero-shot is-empty reveal" id="shot-hero">
+      <div class="chrome"><i></i><i></i><i></i><span class="addr">github.com/DivyanshTiwari20/payment-guard</span></div>
+      <div class="frame">
+        <img src="assets/github-repo.png" alt="PaymentGuard repository on GitHub"
+             onload="this.closest('.shot').classList.remove('is-empty')" />
+        <div class="ph">
+          <div class="ph-icn">🖼️</div>
+          <p>Add your main repo screenshot as <code>docs/assets/github-repo.png</code></p>
+        </div>
+      </div>
+    </figure>
+  </header>
+</div>
+
+<!-- ───────────────── 01 · WHAT IT IS ───────────────── -->
+<section id="is">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="eyebrow"><span class="num">01</span> <span class="dot"></span> What it is</div>
+      <h2>A safety gate between your AI and your money.</h2>
+      <p class="sub">You write the rules. PaymentGuard enforces them on every payment — the AI doesn't get a vote.</p>
+    </div>
+    <div class="is-grid reveal">
+      <p class="lead-p">
+        PaymentGuard lets you set <b>simple rules</b> — who can get paid, how much, and for how long. Every
+        payment your AI tries to make has to pass these rules first. Because the rules run as plain code, the
+        AI can't <b>argue with them, bend them, or skip them</b>.
+      </p>
+      <div class="analogy">
+        <div class="k">⌘ The simplest way to picture it</div>
+        <p>
+          Think of the <b>spending controls on a company card</b>: set once, checked on every purchase, and
+          impossible for the person holding the card to switch off. PaymentGuard does that — for your AI.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── 02 · WHAT IT DOES ───────────────── -->
+<section id="does">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="eyebrow"><span class="num">02</span> <span class="dot"></span> What it does</div>
+      <h2>See what happens when an AI gets tricked.</h2>
+      <p class="sub">The same attack, two defenses, running live in your browser. First a real electricity bill comes in — then a hijacked AI tries to sneak your money out to a stranger in lots of small payments.</p>
+    </div>
+
+    <div class="demo-head reveal">
+      <div class="trust" style="margin:0;"><span style="color:var(--muted)">One real bill, then a hidden attack draining your account bit by bit.</span></div>
+      <div class="cta" style="margin:0;">
+        <button class="btn" id="run">▶ Run the attack</button>
+        <button class="btn ghost" id="reset" style="display:none">Reset</button>
+      </div>
+    </div>
+
+    <div class="cols reveal">
       <div class="col" id="col-naive">
         <header>
-          <h3>A 10-line amount check</h3>
-          <div class="tag">The "any kid can write this" version</div>
+          <h3>A basic spending limit</h3>
+          <div class="tag">What most people would write — block anything over $500</div>
           <div class="codeline">if (amount &gt; 500) reject; else allow;</div>
         </header>
         <div class="feed" id="feed-naive"></div>
         <div class="scoreline" id="score-naive"><span class="sub">Waiting…</span></div>
       </div>
 
-      <div class="col" id="col-guard">
+      <div class="col guard" id="col-guard">
         <header>
-          <h3>PaymentGuard</h3>
-          <div class="tag">Deterministic mandates + caps + audit (the real engine, in your browser)</div>
+          <h3>PaymentGuard <span class="badge2">real engine</span></h3>
+          <div class="tag">Your rules, checked on every single payment</div>
           <div class="rules">
-            <div>· Mandate: pay <b>Electricity Board</b> only, ≤ $2,000/payment</div>
-            <div>· Daily cap: $6,000 · Unknown payees: denied by default</div>
+            <div>· Allowed: pay the <b>Electricity Board</b>, up to $2,000 each time</div>
+            <div>· Daily limit: $6,000 · Anyone not on the list is blocked</div>
           </div>
         </header>
         <div class="feed" id="feed-guard"></div>
@@ -142,56 +460,149 @@
       </div>
     </div>
   </div>
+</section>
 
-  <section class="why">
-    <h2>The rule was never the hard part.</h2>
-    <p style="max-width:640px;margin:8px 0 0;">Anyone can write one threshold. The value is everything that one line ignores:</p>
-    <div class="why-grid">
-      <div class="why-item">
-        <h4>The AI can't bypass it</h4>
-        <p>The decision runs in deterministic code <em>outside</em> the model. A prompt injection can fool the agent — it can't fool the gate or talk its way past it.</p>
+<!-- ───────────────── 03 · HOW IT BENEFITS YOU ───────────────── -->
+<section id="benefits">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="eyebrow"><span class="num">03</span> <span class="dot"></span> How it benefits you</div>
+      <h2>The attacks a spending limit never sees.</h2>
+      <p class="sub">A number stops the obvious. PaymentGuard stops everything clever — the sneaky drains, the unknown payees, the prompt injections.</p>
+    </div>
+    <div class="ben-grid">
+      <div class="ben reveal">
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <h4>An AI can't talk its way past it</h4>
+        <p>Even if a hacker hides instructions inside an email or a web page, the rules don't listen. They're <b>code, not a conversation</b> — there's nothing to persuade.</p>
       </div>
-      <div class="why-item">
-        <h4>It catches the real attacks</h4>
-        <p>Drains via many small "plausible" payments, money to never-authorized payees, payloads smuggled into fields. A single amount check is blind to all of them.</p>
+      <div class="ben reveal">
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".5" fill="currentColor"/></svg></div>
+        <h4>It catches the sneaky attacks</h4>
+        <p>Not just big payments. It stops money going to people you <b>never approved</b>, and drains hidden across <b>lots of tiny payments</b> that slip past a simple limit.</p>
       </div>
-      <div class="why-item">
-        <h4>Authorization, not just a number</h4>
-        <p>Money moves only under a <b>mandate</b> the human created in advance — scoped to a payee and purpose, capped, expiring, and revocable any time.</p>
+      <div class="ben reveal">
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h4"/></svg></div>
+        <h4>You decide ahead of time</h4>
+        <p>You choose <b>who can be paid, how much, and until when</b>. Everything has an expiry date, and you can cancel any rule the moment you change your mind.</p>
       </div>
-      <div class="why-item">
-        <h4>Tamper-evident proof</h4>
-        <p>Every decision — allowed or blocked — is recorded in a hash-chained audit trail. You can prove what happened, and detect if anyone edited the log.</p>
+      <div class="ben reveal">
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 0 1 0 10h-2"/><path d="M8 12h8"/></svg></div>
+        <h4>A receipt for every decision</h4>
+        <p>Every yes and no is written to a log that <b>can't be secretly edited</b>. You can always prove exactly what happened, and spot it if anyone tries to tamper with it.</p>
       </div>
     </div>
-    <p style="margin-top:26px;color:var(--muted);font-size:14.5px;">
-      Like <code style="background:var(--soft);padding:1px 6px;border-radius:5px;">bcrypt</code> for passwords:
-      simple in spirit, easy to get dangerously wrong, so you use the tested one instead of rolling your own.
-    </p>
-  </section>
+  </div>
+</section>
 
-  <section class="use">
-    <h2>Use it in one line</h2>
-    <div class="install">
-      <div class="line"><span class="what">MCP server — Claude Code, Cursor, Claude Desktop, Windsurf…</span><code>npx -y payment-guard</code></div>
-      <div class="line"><span class="what">Library — call it from your own backend</span><code>npm install payment-guard</code></div>
+<!-- ───────────────── ABOUT ───────────────── -->
+<section id="about">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="eyebrow"><span class="dot"></span> About</div>
+      <h2>The safest place for your money is one that never holds it.</h2>
     </div>
-    <p style="color:var(--muted);font-size:14px;margin-top:14px;">
-      Non-custodial: PaymentGuard never holds or moves your money. It's the decision + audit layer
-      you put in front of whatever rail settles — cards, bank, or stablecoins.
-    </p>
-  </section>
+    <div class="about-grid">
+      <div class="copy-col reveal">
+        <p>
+          <b>PaymentGuard never holds or touches your money.</b> It only answers one question — is this payment
+          allowed? — and lets your real card, bank, or crypto do the actual moving. Nothing to hack, nothing to
+          run off with.
+        </p>
+        <p>
+          Developers can add it to an AI assistant like <b>Claude or Cursor in one line</b>, or drop it into
+          their own app. The engine running the live demo above is the <b>exact same code</b> anyone can
+          install — and it's completely free and open source.
+        </p>
+        <ul class="meta-list">
+          <li><span class="key">price</span> Free &amp; open source (MIT)</li>
+          <li><span class="key">package</span> <a href="https://www.npmjs.com/package/payment-guard">payment-guard</a> on npm</li>
+          <li><span class="key">source</span> <a href="https://github.com/DivyanshTiwari20/payment-guard">github.com/DivyanshTiwari20/payment-guard</a></li>
+          <li><span class="key">author</span> <a href="https://github.com/DivyanshTiwari20">Divyansh Tiwari</a></li>
+        </ul>
+      </div>
 
-  <footer>
-    <span>MIT · the engine in this demo is the exact code on npm</span>
-    <span>
-      <a href="https://github.com/DivyanshTiwari20/payment-guard">GitHub</a> ·
-      <a href="https://www.npmjs.com/package/payment-guard">npm</a> ·
-      built by <a href="https://github.com/DivyanshTiwari20">Divyansh Tiwari</a>
-    </span>
-  </footer>
+      <!-- secondary screenshot — full width, only the bottom is cropped -->
+      <figure class="shot about-shot is-empty reveal" id="shot-about">
+        <div class="chrome"><i></i><i></i><i></i><span class="addr">payment-guard · About</span></div>
+        <div class="frame">
+          <img src="assets/github-about.png" alt="PaymentGuard repository About panel"
+               onload="this.closest('.shot').classList.remove('is-empty')" />
+          <div class="ph">
+            <div class="ph-icn">🖼️</div>
+            <p>Add your second screenshot as <code>docs/assets/github-about.png</code></p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </div>
+</section>
 
-</div>
+<!-- ───────────────── FAQ ───────────────── -->
+<section id="faq">
+  <div class="wrap narrow">
+    <div class="head reveal">
+      <div class="eyebrow"><span class="dot"></span> FAQ</div>
+      <h2>Quick answers.</h2>
+    </div>
+    <div class="faq reveal">
+      <details open>
+        <summary>Does PaymentGuard ever hold my money? <span class="chev">+</span></summary>
+        <div class="ans">No — it never touches your money. It only says <b>yes</b> or <b>no</b> to a payment. The money itself moves through whatever you already use: your card, your bank, or crypto.</div>
+      </details>
+      <details>
+        <summary>Can a hacked AI get around the rules? <span class="chev">+</span></summary>
+        <div class="ans">No. The rules run as plain code, completely separate from the AI. A hacker can fool the assistant with a hidden message — but they can't talk the rules into letting a payment through.</div>
+      </details>
+      <details>
+        <summary>What can I pay with? <span class="chev">+</span></summary>
+        <div class="ans">Anything. PaymentGuard doesn't move money itself, so it works on top of cards, bank transfers, or crypto — whatever you already use.</div>
+      </details>
+      <details>
+        <summary>How do I add it? <span class="chev">+</span></summary>
+        <div class="ans">
+          One line. To use it with an AI assistant:
+          <div class="cmd"><code>npx -y payment-guard</code><button class="copy" data-copy="npx -y payment-guard" title="Copy" aria-label="Copy command"><svg class="i-copy" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg class="i-check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button></div>
+          Or to use it inside your own app:
+          <div class="cmd"><code>npm install payment-guard</code><button class="copy" data-copy="npm install payment-guard" title="Copy" aria-label="Copy command"><svg class="i-copy" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg class="i-check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button></div>
+        </div>
+      </details>
+      <details>
+        <summary>Is it really free? <span class="chev">+</span></summary>
+        <div class="ans">Yes — completely free and open source under the MIT license. The engine running the demo on this page is the exact code you'd install.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── CTA BAND ───────────────── -->
+<section class="band-sec">
+  <div class="wrap">
+    <div class="cta-band reveal">
+      <div class="eyebrow"><span class="dot"></span> Get started</div>
+      <h2>Stop hoping your AI behaves. Enforce it.</h2>
+      <p>Add PaymentGuard in one line. It's free, open source, and it never holds a cent of your money.</p>
+      <div class="actions">
+        <div class="cmd" style="min-width:280px;"><code>npx -y payment-guard</code><button class="copy" data-copy="npx -y payment-guard" title="Copy" aria-label="Copy command"><svg class="i-copy" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg class="i-check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button></div>
+        <a class="btn ghost" href="https://github.com/DivyanshTiwari20/payment-guard">View on GitHub</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────── FOOTER ───────────────── -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <span>MIT · the engine in this demo is the exact code on npm</span>
+      <span class="foot-links">
+        <a href="https://github.com/DivyanshTiwari20/payment-guard">GitHub</a>
+        <a href="https://www.npmjs.com/package/payment-guard">npm</a>
+        <a href="https://github.com/DivyanshTiwari20">Divyansh Tiwari</a>
+      </span>
+    </div>
+  </div>
+</footer>
 
 <script type="module">
   import { decidePayment } from './engine.js';
@@ -204,14 +615,14 @@
   // The scripted attack: one real bill, then a prompt-injected drain to a stranger.
   const SCRIPT = [
     { desc: 'Your real electricity bill', payee: 'Electricity Board', amount: 1850 },
-    { desc: 'Injected: pay attacker', payee: 'attacker-wallet', amount: 50 },
-    { desc: 'Injected: pay attacker', payee: 'attacker-wallet', amount: 120 },
-    { desc: 'Injected: pay attacker', payee: 'attacker-wallet', amount: 75 },
-    { desc: 'Injected: pay attacker', payee: 'attacker-wallet', amount: 200 },
-    { desc: 'Injected: pay attacker', payee: 'attacker-wallet', amount: 90 },
-    { desc: 'Injected: pay attacker', payee: 'attacker-wallet', amount: 160 },
-    { desc: 'Injected: pay attacker', payee: 'attacker-wallet', amount: 60 },
-    { desc: 'Injected: pay attacker', payee: 'attacker-wallet', amount: 170 },
+    { desc: 'Hidden: pay a stranger', payee: 'attacker-wallet', amount: 50 },
+    { desc: 'Hidden: pay a stranger', payee: 'attacker-wallet', amount: 120 },
+    { desc: 'Hidden: pay a stranger', payee: 'attacker-wallet', amount: 75 },
+    { desc: 'Hidden: pay a stranger', payee: 'attacker-wallet', amount: 200 },
+    { desc: 'Hidden: pay a stranger', payee: 'attacker-wallet', amount: 90 },
+    { desc: 'Hidden: pay a stranger', payee: 'attacker-wallet', amount: 160 },
+    { desc: 'Hidden: pay a stranger', payee: 'attacker-wallet', amount: 60 },
+    { desc: 'Hidden: pay a stranger', payee: 'attacker-wallet', amount: 170 },
   ];
 
   const freshMandates = () => [{
@@ -278,9 +689,9 @@
   }
 
   function shortReason(r) {
-    if (/no active mandate/i.test(r)) return 'no mandate for this payee';
-    if (/daily limit/i.test(r)) return 'daily cap reached';
-    if (/per-transaction/i.test(r)) return 'over mandate cap';
+    if (/no active mandate/i.test(r)) return 'not on your allowed list';
+    if (/daily limit/i.test(r)) return 'daily limit reached';
+    if (/per-transaction/i.test(r)) return 'over the per-payment cap';
     return r;
   }
 
@@ -291,6 +702,51 @@
     $('score-guard').innerHTML = '<span class="sub">Waiting…</span>';
     $('run').disabled = false; $('reset').style.display = 'none';
   });
+
+  // Copy-to-clipboard (icon-only buttons), with a fallback for blocked contexts.
+  async function copyText(text) {
+    try { await navigator.clipboard.writeText(text); return true; } catch (e) { /* fall through */ }
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed'; ta.style.top = '0'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      const ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      return ok;
+    } catch (e) { return false; }
+  }
+  document.querySelectorAll('.copy').forEach((b) => {
+    b.addEventListener('click', async () => {
+      const ok = await copyText(b.dataset.copy);
+      if (!ok) return;
+      b.classList.add('copied');
+      setTimeout(() => b.classList.remove('copied'), 1500);
+    });
+  });
+
+  // Subtle scroll-reveal. Manual rect checks (not IntersectionObserver) so it
+  // works in every renderer, and a safety net guarantees nothing stays hidden.
+  (function () {
+    const els = [].slice.call(document.querySelectorAll('.reveal'));
+    if (!els.length) return;
+    document.body.classList.add('reveal-on');
+    let ticking = false;
+    function reveal() {
+      ticking = false;
+      const limit = window.innerHeight - 60;
+      for (let i = els.length - 1; i >= 0; i--) {
+        if (els[i].getBoundingClientRect().top < limit) { els[i].classList.add('in'); els.splice(i, 1); }
+      }
+      if (!els.length) { window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll); }
+    }
+    function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(reveal); } }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    reveal(); // reveal whatever is above the fold right away
+    // safety net: if scroll events never arrive (odd embedded webviews), show everything.
+    setTimeout(function () { els.slice().forEach(function (el) { el.classList.add('in'); }); }, 3000);
+  })();
 </script>
 </body>
 </html>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="PaymentGuard">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3b82f6"/>
+      <stop offset="1" stop-color="#4f46e5"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="#0a0a0b"/>
+  <path d="M256 120 L378 163 V272 C378 342 324 384 256 404 C188 384 134 342 134 272 V163 Z" fill="url(#g)"/>
+  <path d="M256 120 L378 163 V272 C378 342 324 384 256 404 C188 384 134 342 134 272 V163 Z" fill="none" stroke="#ffffff" stroke-opacity="0.18" stroke-width="6"/>
+  <path d="M210 260 L243 296 L312 216" fill="none" stroke="#ffffff" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
